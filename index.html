@@ -18,13 +18,12 @@
                 width: 100%;
                 margin: 0;
                 text-align: center;
-                max-height: 240px;
-            }
-            @media screen and (max-width: 540px) {
-            .top, .bottom {
                 max-height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            }
+
             .top img, .bottom img {
                 padding: 3% 20%;
                 width: 100%;
@@ -47,12 +46,7 @@
                 background-size: cover;
                 background-position: center;
                 position: relative;
-                height: calc(100lvh - 240px);
-            }
-            @media screen and (max-width: 540px) {
-                main {
-                    max-height: calc(100lvh - 120px);
-                }
+                height: calc(100lvh - 160px);
             }
 
             /* ロゴ */
@@ -209,7 +203,6 @@
         <script>
             let checkVideo;
             let video; // video変数をグローバルスコープで宣言
-            let cameraType = "environment"; //初期カメラタイプ
             // 開始ボタンクリック後のイベント
             document.getElementById('startButton').addEventListener('click', function() {
                 // 開始ボタンを消す。
@@ -221,7 +214,6 @@
                 // カメラ表示
                 document.getElementById('qrScannerContainer').style.display = 'block';
                 // QRスキャナー起動
-                // const codeReader = new ZXing.BrowserQRCodeReader();
                 const videoElement = document.getElementById('video');
                 const resultImageElement = document.getElementById('resultImage');
                 // 最後の判定結果を保持する変数
@@ -232,7 +224,7 @@
                     const randomNumber = Math.floor(Math.random() * 100) + 1;
                     return randomNumber;
                 }
-
+                let cameraType = "environment"; //初期カメラタイプ
                 function scanQRCode(cameraType) {
                     checkVideo = setInterval(() => {
                         video = document.querySelector('video'); // videoの値をグローバル変数に設定
@@ -265,7 +257,7 @@
                         cameraType = "user";
                     }
                     video = document.querySelector('video');
-                    console.log(video);
+                    // console.log(video);
                     // stopStreamedVideo(video);
                     navigator.mediaDevices.getUserMedia({
                         audio: false,
@@ -274,20 +266,7 @@
                         }
                     })
                     .then(function(stream) {
-
-                        // インカメの時、カメラと画像の左右反転
-                        myVideo = document.querySelector('video'); 
-
-                        if(cameraType == "environment") {
-                            myVideo.classList.remove('flip');
-                            myVideo.classList.add('unflip');
-                        }
-                        else if (cameraType == "user") {
-                            myVideo.classList.remove('unflip');
-                            myVideo.classList.add('flip');
-                        }
                         // console.log(cameraType);
-
                         video.pause();
                         video.srcObject = stream;
                         video.play();
@@ -299,7 +278,7 @@
                 }
 
                 var switch_camera_btn = document.querySelector('#switchCameraButton');
-
+                
                 switch_camera_btn.addEventListener("click", function (e) {
                     e.preventDefault();
                     cameraChange(cameraType);
@@ -308,7 +287,7 @@
                 const checkImage = () => {
                     const canvas = document.querySelector('#js-canvas');
                     const ctx = canvas.getContext('2d');
-                    console.log(video);
+                    // console.log(video);
                     // 取得している動画をCanvasに描画
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -322,12 +301,12 @@
                     // 失敗したら再度実行
                     if (code) {
                         // openModal(code.data)
-                        console.log('成功');
+                        // console.log('成功');
 
                         // const resultText = document.querySelector('.result').getText();
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
-                        if (lastResult === null) { 
+                        if (lastResult === null) {
                             const randomNum = generateRandomNumber();
                             console.log(randomNum);
                             let result;
@@ -358,9 +337,8 @@
                             showResult(result); // 当たり判定の結果を表示
                             ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
-
                     } else {
-                        setTimeout(() => { checkImage() }, 200)
+                        setTimeout(() => { checkImage() }, 1000)
                     }
                 }
 
@@ -455,7 +433,6 @@
                         scanQRCode(); // QRコードスキャンの再開
                     }, 5000);
                 }
-                var cameraDeviceId = 'environment';
                 scanQRCode(); // 初回のQRコードスキャンを実行
             });
 

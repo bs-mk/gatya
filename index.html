@@ -164,7 +164,7 @@
             }
             #result {
                 position: absolute;
-                bottom: 8%;
+                bottom: 12%;
                 font-weight: 400;
                 font-size: 1.5rem;
             }
@@ -208,6 +208,8 @@
         <script>
             let checkVideo;
             let video; // video変数をグローバルスコープで宣言
+            let cameraType = "environment"; //初期カメラタイプ
+
             // 開始ボタンクリック後のイベント
             document.getElementById('startButton').addEventListener('click', function() {
                 // 開始ボタンを消す。
@@ -229,12 +231,14 @@
                     const randomNumber = Math.floor(Math.random() * 100) + 1;
                     return randomNumber;
                 }
-                let cameraType = "environment"; //初期カメラタイプ
+                console.log(cameraType);
+
                 function scanQRCode(cameraType) {
                     checkVideo = setInterval(() => {
                         video = document.querySelector('video'); // videoの値をグローバル変数に設定
                         // stopStreamedVideo(video);
                         if (video) {
+                            console.log(cameraType);
                             navigator.mediaDevices.getUserMedia({
                                 audio: false,
                                 video: {
@@ -418,10 +422,10 @@
                         lastResult = null; // 最後の判定結果をリセット
                         mainElement.style.backgroundImage = 'url(images/Background.png)'; //背景画像の表示
                         document.querySelector("#footer_text").src = "images/Text_01.png"; // footer 画像の変更
-                        scanQRCode(); // QRコードスキャンの再開
+                        scanQRCode(cameraType); // QRコードスキャンの再開
                     }, 5000);
                 }
-                scanQRCode(); // 初回のQRコードスキャンを実行
+                scanQRCode(cameraType); // 初回のQRコードスキャンを実行
             });
 
             // videoセッション一時停止　（追加）

@@ -164,7 +164,7 @@
             }
             #result {
                 position: absolute;
-                bottom: 6%;
+                bottom: 8%;
                 font-weight: 400;
                 font-size: 1.5rem;
             }
@@ -189,7 +189,7 @@
             <div style="display:none">
                 <canvas id="js-canvas"></canvas>
             </div>
-            <img id="resultImage" src="" style="display: none; width: 50%; max-width: 400px; padding-top: 16vh;">
+            <img id="resultImage" src="" style="display: none; width: 40%; max-width: 350px; padding-top: 16vh;">
             <div id="result"></div>
             <button class="button" id="startButton">開始する</button>
         </div>
@@ -261,25 +261,7 @@
                     }else{
                         cameraType = "user";
                     }
-                    video = document.querySelector('video');
-                    // console.log(video);
-                    // stopStreamedVideo(video);
-                    navigator.mediaDevices.getUserMedia({
-                        audio: false,
-                        video: {
-                            facingMode: cameraType,
-                        }
-                    })
-                    .then(function(stream) {
-                        // console.log(cameraType);
-                        video.pause();
-                        video.srcObject = stream;
-                        video.play();
-                        checkImage();
-                    })
-                    .catch(function(err) {
-                        console.error("An error occurred: " + err);
-                    });
+                    scanQRCode(cameraType);
                 }
 
                 var switch_camera_btn = document.querySelector('#switchCameraButton');
@@ -429,6 +411,7 @@
 
                     setTimeout(function () {
                         resultElement.style.display = 'none';
+                        // ctx.clearRect(0, 0, canvas.width, canvas.height);
                         document.getElementById('qrScannerContainer').style.display = 'block';
                         resultImageElement.style.display = 'none'; // 画像非表示
                         document.querySelector('.ui').style.display = 'inline-block'; //カメラ選択ボタンの表示

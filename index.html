@@ -4,7 +4,7 @@
         <title>景品交換システム</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
+        <!-- <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script> -->
         <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
         <style>
             /* 共通設定 */
@@ -19,6 +19,11 @@
                 margin: 0;
                 text-align: center;
                 max-height: 240px;
+            }
+            @media screen and (max-width: 540px) {
+            .top, .bottom {
+                max-height: 80px;
+            }
             }
             .top img, .bottom img {
                 padding: 3% 20%;
@@ -42,14 +47,13 @@
                 background-size: cover;
                 background-position: center;
                 position: relative;
-                height: calc(95lvh - 240px);
+                height: calc(100lvh - 240px);
             }
             @media screen and (max-width: 540px) {
                 main {
-                    height: calc(95lvh - 240px);
+                    max-height: calc(100lvh - 120px);
                 }
             }
-
 
             /* ロゴ */
             .wrap_logo {
@@ -180,9 +184,11 @@
     </header>
     <main>
         <div class="centered">
-            <!-- <h2 class="top">景品交換システム</h2> -->
             <div id="qrScannerContainer">
-                <video id="video"></video>
+                <video id="video" autoplay playsinline></video>
+            </div>
+            <div style="display:none">
+                <canvas id="js-canvas"></canvas>
             </div>
             <img id="resultImage" src="" style="display: none; width: 50%; max-width: 400px; padding-top: 16vh;">
             <div id="result"></div>
@@ -201,6 +207,9 @@
         </div>
     </footer>
         <script>
+            let checkVideo;
+            let video; // video変数をグローバルスコープで宣言
+            let cameraType = "environment"; //初期カメラタイプ
             // 開始ボタンクリック後のイベント
             document.getElementById('startButton').addEventListener('click', function() {
                 // 開始ボタンを消す。
@@ -212,7 +221,7 @@
                 // カメラ表示
                 document.getElementById('qrScannerContainer').style.display = 'block';
                 // QRスキャナー起動
-                const codeReader = new ZXing.BrowserQRCodeReader();
+                // const codeReader = new ZXing.BrowserQRCodeReader();
                 const videoElement = document.getElementById('video');
                 const resultImageElement = document.getElementById('resultImage');
                 // 最後の判定結果を保持する変数
@@ -224,12 +233,101 @@
                     return randomNumber;
                 }
 
-                function scanQRCode() {
-                    codeReader.decodeOnceFromVideoDevice(null, 'video').then(result => {
-                        const resultText = result.getText();
+                function scanQRCode(cameraType) {
+                    checkVideo = setInterval(() => {
+                        video = document.querySelector('video'); // videoの値をグローバル変数に設定
+                        // stopStreamedVideo(video);
+                        if (video) {
+                            navigator.mediaDevices.getUserMedia({
+                                audio: false,
+                                video: {
+                                    facingMode: cameraType,
+                                }
+                            })
+                            .then(function(stream) {
+                                video.pause();
+                                video.srcObject = stream;
+                                video.play();
+                                checkImage();
+                            })
+                            .catch(function(err) {
+                                alert('Error!!')
+                            });
+                            clearInterval(checkVideo);
+                        }
+                    }, 500);
+                }
+                
+                function cameraChange (type){
+                    if (type == "user"){
+                        cameraType = "environment";
+                    }else{
+                        cameraType = "user";
+                    }
+                    video = document.querySelector('video');
+                    console.log(video);
+                    // stopStreamedVideo(video);
+                    navigator.mediaDevices.getUserMedia({
+                        audio: false,
+                        video: {
+                            facingMode: cameraType,
+                        }
+                    })
+                    .then(function(stream) {
+
+                        // インカメの時、カメラと画像の左右反転
+                        myVideo = document.querySelector('video'); 
+
+                        if(cameraType == "environment") {
+                            myVideo.classList.remove('flip');
+                            myVideo.classList.add('unflip');
+                        }
+                        else if (cameraType == "user") {
+                            myVideo.classList.remove('unflip');
+                            myVideo.classList.add('flip');
+                        }
+                        // console.log(cameraType);
+
+                        video.pause();
+                        video.srcObject = stream;
+                        video.play();
+                        checkImage();
+                    })
+                    .catch(function(err) {
+                        console.error("An error occurred: " + err);
+                    });
+                }
+
+                var switch_camera_btn = document.querySelector('#switchCameraButton');
+
+                switch_camera_btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    cameraChange(cameraType);
+                });
+
+                const checkImage = () => {
+                    const canvas = document.querySelector('#js-canvas');
+                    const ctx = canvas.getContext('2d');
+                    console.log(video);
+                    // 取得している動画をCanvasに描画
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Canvasからデータを取得
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                    // jsQRに渡す
+                    var code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                    // QRコードの読み取りに成功したらモーダル開く
+                    // 失敗したら再度実行
+                    if (code) {
+                        // openModal(code.data)
+                        console.log('成功');
+
+                        // const resultText = document.querySelector('.result').getText();
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
-                        if (resultText && lastResult === null) { 
+                        if (lastResult === null) { 
                             const randomNum = generateRandomNumber();
                             console.log(randomNum);
                             let result;
@@ -258,13 +356,14 @@
                             }
                             lastResult = result; // 最後の判定結果を保持
                             showResult(result); // 当たり判定の結果を表示
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
-                    }).catch(error => {
-                        console.error(error);
-                        showResult('error');
-                    });
+
+                    } else {
+                        setTimeout(() => { checkImage() }, 200)
+                    }
                 }
-                
+
                 // 結果の表示
                 function showResult(resultType) {
                     // 背景画像の削除
@@ -359,6 +458,20 @@
                 var cameraDeviceId = 'environment';
                 scanQRCode(); // 初回のQRコードスキャンを実行
             });
+
+            // videoセッション一時停止　（追加）
+            // function stopStreamedVideo(videoElem) {
+            //     let stream = videoElem.srcObject;
+            //     console.log(stream);
+            //     // let tracks = stream.getTracks();
+
+            //     // tracks.forEach(function(track) {
+            //     //     track.stop();
+            //     // });
+
+            //     videoElem.srcObject = null;
+            // }
         </script>
     </body>
+    <script src="jsQR.js"></script>
 </html>

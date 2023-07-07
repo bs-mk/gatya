@@ -67,28 +67,15 @@
             }
             .ui {
                 position: absolute;
-                width: 10vw;
+                width: 5vw;
                 bottom: 3%;
                 right: 3%;
                 display: none;
             }
-            @media screen and (max-width: 540px) {
-                .wrap_logo {
-                    width: 16vw;
-                    bottom: 6%;
-                    left: 6%;
-                }
-                .ui {
-                    width: 12vw;
-                    bottom: 6%;
-                    right: 6%;
-                }
-
-            }
             .ui a {
                 display: inline-block;
-                width: 11vw;
-                height: 11vw;
+                width: 6vw;
+                height: 6vw;
                 background-color: #000;
                 line-height: 100%;
                 color: #fff;
@@ -101,7 +88,26 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%,-50%);
+                font-size: 3vw;
+            }
+            @media screen and (max-width: 540px) {
+                .wrap_logo {
+                    width: 16vw;
+                    bottom: 6%;
+                    left: 6%;
+                }
+                .ui {
+                    width: 12vw;
+                    bottom: 6%;
+                    right: 6%;
+                }
+                .ui a {
+                    width: 11vw;
+                    height: 11vw;
+                }
+            .ui a i {
                 font-size: 6vw;
+                }
             }
 
             /* QRスキャナーのコンテナ要素 */
@@ -182,12 +188,13 @@
     <main>
         <div class="centered">
             <div id="qrScannerContainer">
-                <video id="video" autoplay playsinline></video>
+                <video id="video"></video>
             </div>
             <div style="display:none">
                 <canvas id="js-canvas"></canvas>
             </div>
-            <img id="resultImage" src="" style="display: none; width: 40%; max-width: 350px; padding-top: 16vh;">
+            <!-- <img id="resultImage" src="" style="display: none; width: 40%; max-width: 350px; padding-top: 16vh;"> -->
+            <img id="resultImage" src="" style="display: none; width: 40%; max-width: 300px; padding-top: 8vh;">
             <div id="result"></div>
             <button class="button" id="startButton">開始する</button>
         </div>
@@ -291,6 +298,7 @@
                     // QRコードの読み取りに成功したらモーダル開く
                     // 失敗したら再度実行
                     if (code && randomNum == null && checkImageCnt == 0) {
+                        console.log(code.data);
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行

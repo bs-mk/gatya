@@ -67,28 +67,10 @@
             }
             .ui {
                 position: absolute;
-                width: 5vw;
+                width: 10vw;
                 bottom: 3%;
                 right: 3%;
                 display: none;
-            }
-            .ui a {
-                display: inline-block;
-                width: 6vw;
-                height: 6vw;
-                background-color: #000;
-                line-height: 100%;
-                color: #fff;
-                margin: 10px 1vw;
-                border-radius: 50%;
-                position: relative;
-            }
-            .ui a i {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%,-50%);
-                font-size: 3vw;
             }
             @media screen and (max-width: 540px) {
                 .wrap_logo {
@@ -101,13 +83,25 @@
                     bottom: 6%;
                     right: 6%;
                 }
-                .ui a {
-                    width: 11vw;
-                    height: 11vw;
-                }
+
+            }
+            .ui a {
+                display: inline-block;
+                width: 11vw;
+                height: 11vw;
+                background-color: #000;
+                line-height: 100%;
+                color: #fff;
+                margin: 10px 1vw;
+                border-radius: 50%;
+                position: relative;
+            }
             .ui a i {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
                 font-size: 6vw;
-                }
             }
 
             /* QRスキャナーのコンテナ要素 */
@@ -188,13 +182,12 @@
     <main>
         <div class="centered">
             <div id="qrScannerContainer">
-                <video id="video"></video>
+                <video id="video" autoplay playsinline></video>
             </div>
             <div style="display:none">
                 <canvas id="js-canvas"></canvas>
             </div>
-            <!-- <img id="resultImage" src="" style="display: none; width: 40%; max-width: 350px; padding-top: 16vh;"> -->
-            <img id="resultImage" src="" style="display: none; width: 40%; max-width: 300px; padding-top: 8vh;">
+            <img id="resultImage" src="" style="display: none; width: 40%; max-width: 350px; padding-top: 16vh;">
             <div id="result"></div>
             <button class="button" id="startButton">開始する</button>
         </div>
@@ -280,8 +273,6 @@
                     cameraChange(cameraType);
                 });
 
-                var checkImageCnt = 0;
-
                 const checkImage = () => {
                     const canvas = document.querySelector('#js-canvas');
                     const ctx = canvas.getContext('2d');
@@ -294,16 +285,18 @@
 
                     // jsQRに渡す
                     var code = jsQR(imageData.data, canvas.width, canvas.height);
-                    var randomNum = null;
+
                     // QRコードの読み取りに成功したらモーダル開く
                     // 失敗したら再度実行
-                    if (code && randomNum == null && checkImageCnt == 0) {
-                        // console.log(code.data);
+                    if (code) {
+                        // openModal(code.data)
+                        // console.log('成功');
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        // const resultText = document.querySelector('.result').getText();
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
                         if (lastResult === null) {
-                            randomNum = generateRandomNumber();
+                            const randomNum = generateRandomNumber();
                             console.log(randomNum);
                             let result;
                             // くじの確率と判定
@@ -329,14 +322,13 @@
                                 result = "error";
                                 console.log(result);
                             }
-                            checkImageCnt += 1;
                             lastResult = result; // 最後の判定結果を保持
                             showResult(result); // 当たり判定の結果を表示
+                            // ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
-                        return
+                        // return
                     } else {
                         setTimeout(() => { checkImage() }, 1000)
-                        console.log(checkImageCnt);
                     }
                 }
 
@@ -428,7 +420,6 @@
                         mainElement.style.backgroundImage = 'url(images/Background.png)'; //背景画像の表示
                         document.querySelector("#footer_text").src = "images/Text_01.png"; // footer 画像の変更
                         // scanQRCode(cameraType); // QRコードスキャンの再開
-                        checkImageCnt = 0;
                         document.getElementById('qrScannerContainer').style.display = 'block';
                         checkImage();
                     }, 5000);

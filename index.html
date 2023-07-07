@@ -51,7 +51,7 @@
                 background-size: cover;
                 background-position: center;
                 position: relative;
-                height: calc(100lvh - 160px);
+                height: calc(100svh - 160px);
             }
 
             /* ロゴ */
@@ -101,6 +101,7 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%,-50%);
+                font-size: 6vw;
             }
 
             /* QRスキャナーのコンテナ要素 */
@@ -114,7 +115,7 @@
             video {
                 width: 80vw;
                 max-width: 1080px;
-                margin: 5lvh auto;
+                margin: 5svh auto;
                 height: 80%;
             }
 
@@ -125,8 +126,16 @@
                 font-weight: bold;
                 width: 100%;
                 font-size: 40px;
+                position: absolute;
+                bottom: 15%;
+                font-weight: 400;
+                font-size: 1.5rem;
             }
-
+            @media screen and (max-width: 540px) {
+                #result {
+                    font-size: 2rem;
+                }
+            }
             /* ハズレの表示スタイル */
             .result-lose {
                 color: red;
@@ -158,20 +167,9 @@
             @media screen and (max-width: 540px) {
                 .button {
                     bottom: 8%;
-                    font-size: 32px;
-                    padding: 16px 32px;
+                    font-size: 24px;
+                    padding: 12px 24px;
                 }    
-            }
-            #result {
-                position: absolute;
-                bottom: 12%;
-                font-weight: 400;
-                font-size: 1.5rem;
-            }
-            @media screen and (max-width: 540px) {
-                #result {
-                    font-size: 2rem;
-                }
             }
         </style>
     </head>
@@ -231,7 +229,6 @@
                     const randomNumber = Math.floor(Math.random() * 100) + 1;
                     return randomNumber;
                 }
-                console.log(cameraType);
 
                 function scanQRCode(cameraType) {
                     checkVideo = setInterval(() => {
@@ -293,7 +290,7 @@
                     if (code) {
                         // openModal(code.data)
                         // console.log('成功');
-
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
                         // const resultText = document.querySelector('.result').getText();
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
@@ -326,9 +323,9 @@
                             }
                             lastResult = result; // 最後の判定結果を保持
                             showResult(result); // 当たり判定の結果を表示
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            // ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
-                        return
+                        // return
                     } else {
                         setTimeout(() => { checkImage() }, 1000)
                     }

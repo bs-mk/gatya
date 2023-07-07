@@ -273,6 +273,8 @@
                     cameraChange(cameraType);
                 });
 
+                var checkImageCnt = 0;
+
                 const checkImage = () => {
                     const canvas = document.querySelector('#js-canvas');
                     const ctx = canvas.getContext('2d');
@@ -288,7 +290,7 @@
                     var randomNum = null;
                     // QRコードの読み取りに成功したらモーダル開く
                     // 失敗したら再度実行
-                    if (code && randomNum == null) {
+                    if (code && randomNum == null && checkImageCnt == 0) {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
@@ -319,13 +321,14 @@
                                 result = "error";
                                 console.log(result);
                             }
+                            checkImageCnt += 1;
                             lastResult = result; // 最後の判定結果を保持
                             showResult(result); // 当たり判定の結果を表示
-                            // ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
                         return
                     } else {
                         setTimeout(() => { checkImage() }, 1000)
+                        console.log(checkImageCnt);
                     }
                 }
 
@@ -417,6 +420,7 @@
                         mainElement.style.backgroundImage = 'url(images/Background.png)'; //背景画像の表示
                         document.querySelector("#footer_text").src = "images/Text_01.png"; // footer 画像の変更
                         // scanQRCode(cameraType); // QRコードスキャンの再開
+                        checkImageCnt = 0;
                         document.getElementById('qrScannerContainer').style.display = 'block';
                         checkImage();
                     }, 5000);

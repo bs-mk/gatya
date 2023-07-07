@@ -285,18 +285,15 @@
 
                     // jsQRに渡す
                     var code = jsQR(imageData.data, canvas.width, canvas.height);
-
+                    var randomNum = null;
                     // QRコードの読み取りに成功したらモーダル開く
                     // 失敗したら再度実行
-                    if (code) {
-                        // openModal(code.data)
-                        // console.log('成功');
+                    if (code && randomNum == null) {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        // const resultText = document.querySelector('.result').getText();
                         document.getElementById('qrScannerContainer').style.display = 'none';
                         // 最後の判定結果がない場合のみ実行
                         if (lastResult === null) {
-                            const randomNum = generateRandomNumber();
+                            randomNum = generateRandomNumber();
                             console.log(randomNum);
                             let result;
                             // くじの確率と判定
@@ -326,7 +323,7 @@
                             showResult(result); // 当たり判定の結果を表示
                             // ctx.clearRect(0, 0, canvas.width, canvas.height);
                         }
-                        // return
+                        return
                     } else {
                         setTimeout(() => { checkImage() }, 1000)
                     }

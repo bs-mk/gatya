@@ -51,7 +51,7 @@
                 background-size: cover;
                 background-position: center;
                 position: relative;
-                height: calc(100svh - 160px);
+                height: calc(100lvh - 160px);
             }
 
             /* ロゴ */
@@ -115,7 +115,7 @@
             video {
                 width: 80vw;
                 max-width: 1080px;
-                margin: 5svh auto;
+                margin: 5lvh auto;
                 height: 80%;
             }
 
@@ -206,7 +206,12 @@
         <script>
             let checkVideo;
             let video; // video変数をグローバルスコープで宣言
-            let cameraType = "environment"; //初期カメラタイプ
+            // var count = 1;
+            // 判定値の生成  
+            function generateRandomNumber() {
+                const randomNumber = Math.floor(Math.random() * 100) + 1;
+                return randomNumber;
+            }
 
             // 開始ボタンクリック後のイベント
             document.getElementById('startButton').addEventListener('click', function() {
@@ -223,12 +228,8 @@
                 const resultImageElement = document.getElementById('resultImage');
                 // 最後の判定結果を保持する変数
                 let lastResult = null; 
-
-                // 判定値の生成  
-                function generateRandomNumber() {
-                    const randomNumber = Math.floor(Math.random() * 100) + 1;
-                    return randomNumber;
-                }
+                //初期カメラタイプ
+                let cameraType = "environment";
 
                 function scanQRCode(cameraType) {
                     checkVideo = setInterval(() => {
@@ -413,17 +414,21 @@
 
                     setTimeout(function () {
                         resultElement.style.display = 'none';
-                        // ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        document.getElementById('qrScannerContainer').style.display = 'block';
                         resultImageElement.style.display = 'none'; // 画像非表示
                         document.querySelector('.ui').style.display = 'inline-block'; //カメラ選択ボタンの表示
                         lastResult = null; // 最後の判定結果をリセット
                         mainElement.style.backgroundImage = 'url(images/Background.png)'; //背景画像の表示
                         document.querySelector("#footer_text").src = "images/Text_01.png"; // footer 画像の変更
-                        scanQRCode(cameraType); // QRコードスキャンの再開
+                        // scanQRCode(cameraType); // QRコードスキャンの再開
+                        document.getElementById('qrScannerContainer').style.display = 'block';
+                        checkImage();
                     }, 5000);
                 }
-                scanQRCode(cameraType); // 初回のQRコードスキャンを実行
+
+                // if (count == 1) {
+                    scanQRCode(cameraType); // 初回のQRコードスキャンを実行
+                    // count += 1;
+                // }
             });
 
             // videoセッション一時停止　（追加）
